@@ -5,6 +5,7 @@ import MusicController from "./controllers/Music.controller.js";
 import UsersController from "./controllers/Users.controller.js";
 import PostsController from "./controllers/Posts.controller.js";
 import RepliesController from "./controllers/Replies.controller.js";
+import DMsController from "./controllers/DMs.controller.js";
 
 import SuggestionBoxDAO from "./DAO/SuggestionBoxDAO.js";
 
@@ -72,6 +73,14 @@ router.route("/likereply")
 
 router.route("/deletereply")
 .post((req, res, next) => RepliesController.deleteReply(req, res, next))
+
+
+// DM Routes
+router.route("/createroom")
+.post((req, res, next) => DMsController.createRoom(req, res, next))
+
+router.route("/getroom")
+.get((req, res, next) => DMsController.getRoom(req, res, next))
 
 
 export default router
