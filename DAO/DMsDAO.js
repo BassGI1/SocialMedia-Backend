@@ -67,4 +67,16 @@ export default class DMsDAO{
         }
         return false
     }
+
+    static async sendMessage(roomId, userId, text){
+        const m = new message(text, userId)
+        try{
+            return await DMs.updateOne({_id: new ObjectId(roomId)}, {$push: {messages: m}})
+        }
+        catch(e){
+            console.log(e)
+            return false
+        }
+        return false
+    }
 }

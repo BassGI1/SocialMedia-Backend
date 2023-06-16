@@ -14,4 +14,9 @@ export default class DMsController{
     static async getRoom(req, res, next){
         res.json(await DMsDAO.getRoomById(req.query.id))
     }
+
+    static async sendMessage(req, res, next){
+        const { text, roomId, userId } = req.body
+        res.json(await DMsDAO.sendMessage(roomId, userId, text))
+    }
 }

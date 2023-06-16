@@ -82,5 +82,8 @@ router.route("/createroom")
 router.route("/getroom")
 .get((req, res, next) => DMsController.getRoom(req, res, next))
 
+router.route("/sendmessage")
+.post((req, res, next) => DMsController.sendMessage(req, res, next))
+
 
 export default router
