@@ -35,6 +35,9 @@ router.route("/edituser")
 router.route("/changefollowstatus")
 .post((req, res, next) => UsersController.changeFollowerStatus(req, res, next))
 
+router.route("/deleteuser")
+.post((req, res, next) => UsersController.deleteUser(req, res, next))
+
 
 // Getting a Profile Routes
 router.route("/getuser")

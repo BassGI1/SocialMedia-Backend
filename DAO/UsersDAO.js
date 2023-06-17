@@ -14,7 +14,7 @@ export default class UsersDAO{
     }
 
     static async getUser(obj){
-        let user = null
+        let user
         const field = Object.keys(obj)[0]
         const searchParams = {}
         searchParams[field] = {$eq: obj[field]}
@@ -43,7 +43,7 @@ export default class UsersDAO{
     }
 
     static async createNewUser(email, username, password, firstName, lastName, created){
-        let id = null
+        let id
         try{
             id = await users.insertOne({"email": email, "password": password, "firstName": firstName, "lastName": lastName, "created": created, "username": username, "followers": []})
         }
@@ -121,5 +121,29 @@ export default class UsersDAO{
         }
         if (user) return user
         return false
+    }
+
+    static async deleteUser(id){
+        let success
+        try{
+            success = await users.deleteOne({_id: new ObjectId(id)})
+            if (!success.deletedCount) return false
+            success = await users.updateMany({followers: id}, {$pull: {followers: id}})
+        }
+        catch(e){
+            console.log(e)
+            return false
+        }
+        return success
+    }
+
+    static async getUsersFollowed(id){
+        try{
+            return await (await users.find({followers: id})).toArray()
+        }
+        catch(e){
+            console.log(e)
+            return false
+        }
     }
 }

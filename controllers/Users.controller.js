@@ -20,4 +20,16 @@ export default class UsersController{
         if (user) res.json({id: user["_id"], firstName: user["firstName"], lastName: user["lastName"], email: user["email"], created: user["created"], theme: user["theme"] || null, username: user["username"], success: true, followers: user["followers"]})
         else res.json({success: false})
     }
+
+
+    static async deleteUser(req, res, next){
+        const { id, password } = req.body
+        const user = await UsersDAO.getUserByID(id)
+        if (user.password !== password) res.json({success: false})
+        else{
+            let success = await UsersDAO.deleteUser(id)
+            if (!success) res.json({success: false})
+            else res.json({success: true})
+        }
+    }
 }
