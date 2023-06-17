@@ -1,4 +1,5 @@
 import DMsDAO from "../DAO/DMsDAO.js";
+import UsersDAO from "../DAO/UsersDAO.js";
 
 export default class DMsController{
     static async createRoom(req, res, next){
@@ -18,5 +19,27 @@ export default class DMsController{
     static async sendMessage(req, res, next){
         const { text, roomId, userId } = req.body
         res.json(await DMsDAO.sendMessage(roomId, userId, text))
+    }
+
+    static async getAllRoomsForUser(req, res, next){
+        const userId = req.query.id
+        const data = await DMsDAO.getUserRooms(userId)
+        if (!data) res.json({empty: true})
+        else{
+            let returnData = []
+            if (!data.length) res.json([])
+            await data.forEach(async (room, i) => {
+                let otherUserId
+                if (room.userOne === userId) otherUserId = room.userTwo
+                else otherUserId = room.userOne
+                const otherUser = await UsersDAO.getUserByID(otherUserId)
+                returnData.push({
+                    roomId: room._id,
+                    name: `${otherUser.firstName || "deleted"} ${otherUser.lastName || "user"}`,
+                    theme: otherUser.theme
+                })
+                if (returnData.length === data.length) res.json(returnData)
+            })
+        }
     }
 }

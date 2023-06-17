@@ -27,7 +27,8 @@ export default class DMsDAO{
             status = await DMs.insertOne({
                 userOne: userOne,
                 userTwo: userTwo,
-                messages: []
+                messages: [],
+                timeInteraction: new Date()
             })
         }
         catch(e){
@@ -71,12 +72,26 @@ export default class DMsDAO{
     static async sendMessage(roomId, userId, text){
         const m = new message(text, userId)
         try{
-            return await DMs.updateOne({_id: new ObjectId(roomId)}, {$push: {messages: m}})
+            return await DMs.updateOne({_id: new ObjectId(roomId)}, {$push: {messages: m}, $set: {timeInteraction: new Date()}})
         }
         catch(e){
             console.log(e)
             return false
         }
         return false
+    }
+
+    static async getUserRooms(userId){
+        let halfOne = []
+        let halfTwo = []
+        try{
+            halfOne = await (await DMs.find({"userOne": userId})).toArray()
+            halfTwo = await (await DMs.find({"userTwo": userId})).toArray()
+        }
+        catch(e){
+            console.log(e)
+            return false
+        }
+        return [...halfOne, ...halfTwo].sort((b, a) => a.timeInteraction - b.timeInteraction)
     }
 }
