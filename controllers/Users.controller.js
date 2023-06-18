@@ -15,8 +15,7 @@ export default class UsersController{
     }
 
     static async getUser(req, res, next){
-        const obj = req.query
-        const user = await UsersDAO.getSingleUserGivenArbitraryNumberOfCredentials(obj)
+        const user = await UsersDAO.getSingleUserGivenArbitraryNumberOfCredentials(req.query)
         if (user) res.json({id: user["_id"], firstName: user["firstName"], lastName: user["lastName"], email: user["email"], created: user["created"], theme: user["theme"] || null, username: user["username"], success: true, followers: user["followers"]})
         else res.json({success: false})
     }

@@ -109,7 +109,7 @@ export default class UsersDAO{
         let q = {}
         let user = null
         for (let i = 0; i < keys.length; ++i){
-            if (keys[i] === "_id") q[keys[i]] = new ObjectId(obj[keys[i]])
+            if (keys[i] === "_id" && obj[keys[i]].length) q[keys[i]] = new ObjectId(obj[keys[i]])
             else q[keys[i]] = {$eq: obj[keys[i]]}
         }
         try{
