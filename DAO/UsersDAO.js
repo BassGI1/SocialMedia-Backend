@@ -1,5 +1,7 @@
 import { ObjectId } from "mongodb"
 
+import ImagesController from "../controllers/Images.controller.js"
+
 let users
 
 export default class UsersDAO{
@@ -45,7 +47,7 @@ export default class UsersDAO{
     static async createNewUser(email, username, password, firstName, lastName, created){
         let id
         try{
-            id = await users.insertOne({"email": email, "password": password, "firstName": firstName, "lastName": lastName, "created": created, "username": username, "followers": []})
+            id = await users.insertOne({"email": email, "password": password, "name": `${firstName} ${lastName}`, "created": created, "username": username, "followers": []})
         }
         catch(e){
             console.log(e)
@@ -145,5 +147,59 @@ export default class UsersDAO{
             console.log(e)
             return false
         }
+    }
+
+    static async searchForUserByQuery(query){
+        let usersByName
+        let usersByUsername
+        let usersByEmail
+        try{
+            usersByName = await users.find({name: new RegExp(query, "i")})
+            usersByUsername = await users.find({username: new RegExp(query, "i")})
+            usersByEmail = await users.find({email: new RegExp(query, "i")})
+        }
+        catch(e){
+            console.log(e)
+            return false
+        }
+        try{
+            usersByName = await usersByName.toArray()
+            usersByEmail = await usersByEmail.toArray()
+            usersByUsername = await usersByUsername.toArray()
+        }
+        catch(e){
+            console.log(e)
+            return false
+        }
+        let trueList = {}
+        for (let i = 0; i < usersByEmail.length; ++i){
+            if (!trueList[usersByEmail[i]._id.toString()]){
+                trueList[usersByEmail[i]._id.toString()] = usersByEmail[i]
+            }
+        }
+        for (let i = 0; i < usersByUsername.length; ++i){
+            if (!trueList[usersByUsername[i]._id.toString()]){
+                trueList[usersByUsername[i]._id.toString()] = usersByUsername[i]
+            }
+        }
+        for (let i = 0; i < usersByName.length; ++i){
+            if (!trueList[usersByName[i]._id.toString()]){
+                trueList[usersByName[i]._id.toString()] = usersByName[i]
+            }
+        }
+        let retData = []
+        for (const x of Object.values(trueList)){
+            let image = await ImagesController.getImage(x._id.toString())
+            retData.push({
+                id: x._id.toString(),
+                image: image || null,
+                name: x.name,
+                theme: x.theme || null,
+                username: x.username,
+                created: x.created,
+                numFollowers: x.followers.length
+            })
+        }
+        return retData
     }
 }

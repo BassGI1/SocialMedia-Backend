@@ -6,6 +6,8 @@ import UsersController from "./controllers/Users.controller.js";
 import PostsController from "./controllers/Posts.controller.js";
 import RepliesController from "./controllers/Replies.controller.js";
 import DMsController from "./controllers/DMs.controller.js";
+import ImagesController from "./controllers/Images.controller.js";
+import SearchController from "./controllers/Search.controller.js";
 
 import SuggestionBoxDAO from "./DAO/SuggestionBoxDAO.js";
 
@@ -91,5 +93,18 @@ router.route("/sendmessage")
 router.route("/getallroomsforuser")
 .get((req, res, next) => DMsController.getAllRoomsForUser(req, res, next))
 
+
+// Images Routes
+router.route("/image")
+.get(async (req, res, next) => res.json(await ImagesController.getImage(req.query.id)))
+.post(async (req, res, next) => {
+    const { id, imageString } = req.body
+    res.json({data: await ImagesController.putImage(id, imageString)})
+})
+
+
+// Searching Routes
+router.route("/search")
+.get((req, res, next) => SearchController.normalSearchWithQuery(req, res, next))
 
 export default router

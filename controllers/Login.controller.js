@@ -22,7 +22,7 @@ export default class LoginController{
         let user = await UsersDAO.getUser({email: email}) || await UsersDAO.getUser({username: username})
         if (!user){
             const id = await UsersDAO.createNewUser(email, username, password, firstName, lastName, created)
-            res.json({success: true, email: email, password: password, _id: id, firstName: firstName, lastName: lastName, created: created, username: username})
+            res.json({success: true, email: email, password: password, _id: id, name: `${firstName} ${lastName}`, created: created, username: username})
         }
         else{
             res.json({success: false})

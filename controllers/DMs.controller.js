@@ -1,5 +1,6 @@
 import DMsDAO from "../DAO/DMsDAO.js";
 import UsersDAO from "../DAO/UsersDAO.js";
+import ImagesController from "./Images.controller.js";
 
 export default class DMsController{
     static async createRoom(req, res, next){
@@ -33,10 +34,12 @@ export default class DMsController{
                 if (room.userOne === userId) otherUserId = room.userTwo
                 else otherUserId = room.userOne
                 const otherUser = await UsersDAO.getUserByID(otherUserId)
+                const otherUserImage = (await ImagesController.getImage(otherUserId)).data
                 returnData.push({
                     roomId: room._id,
-                    name: `${otherUser.firstName || "deleted"} ${otherUser.lastName || "user"}`,
-                    theme: otherUser.theme
+                    name: otherUser.name || "deleted user",
+                    theme: otherUser.theme,
+                    image: otherUserImage || null
                 })
                 if (returnData.length === data.length) res.json(returnData)
             })

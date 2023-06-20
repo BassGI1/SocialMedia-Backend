@@ -1,4 +1,5 @@
 import UsersDAO from "../DAO/UsersDAO.js";
+import ImagesController from "./Images.controller.js";
 
 export default class UsersController{
     static async changeUser(req, res, next){
@@ -16,7 +17,7 @@ export default class UsersController{
 
     static async getUser(req, res, next){
         const user = await UsersDAO.getSingleUserGivenArbitraryNumberOfCredentials(req.query)
-        if (user) res.json({id: user["_id"], firstName: user["firstName"], lastName: user["lastName"], email: user["email"], created: user["created"], theme: user["theme"] || null, username: user["username"], success: true, followers: user["followers"]})
+        if (user) res.json({id: user["_id"], name: user["name"], email: user["email"], created: user["created"], theme: user["theme"] || null, username: user["username"], success: true, followers: user["followers"]})
         else res.json({success: false})
     }
 
@@ -28,7 +29,10 @@ export default class UsersController{
         else{
             let success = await UsersDAO.deleteUser(id)
             if (!success) res.json({success: false})
-            else res.json({success: true})
+            else{
+                ImagesController.deleteImage(id)
+                res.json({success: true})
+            }
         }
     }
 }
