@@ -200,6 +200,6 @@ export default class UsersDAO{
                 numFollowers: x.followers.length
             })
         }
-        return retData
+        return retData.sort((a, b) => b.numFollowers - a.numFollowers)
     }
 }

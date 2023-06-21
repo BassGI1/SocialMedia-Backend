@@ -1,4 +1,5 @@
 import { ObjectId } from "mongodb"
+import UsersDAO from "./UsersDAO.js"
 
 let posts
 
@@ -124,5 +125,51 @@ export default class PostsDAO{
             return false
         }
         return true
+    }
+
+    static async searchForPostByQuery(query){
+        let postsByTitle
+        let postsByText
+        try{
+            postsByTitle = await posts.find({title: new RegExp(query, "i")})
+            postsByText = await posts.find({text: new RegExp(query, "i")})
+        }
+        catch(e){
+            console.log(e)
+            return false
+        }
+        try{
+            postsByTitle = await postsByTitle.toArray()
+            postsByText = await postsByText.toArray()
+        }
+        catch(e){
+            console.log(e)
+            return false
+        }
+        let trueList = {}
+        for (let i = 0; i < postsByTitle.length; ++i){
+            if (!trueList[postsByTitle[i]._id.toString()]){
+                trueList[postsByTitle[i]._id.toString()] = postsByTitle[i]
+            }
+        }
+        for (let i = 0; i < postsByText.length; ++i){
+            if (!trueList[postsByText[i]._id.toString()]){
+                trueList[postsByText[i]._id.toString()] = postsByText[i]
+            }
+        }
+        let retData = []
+        for (const x of Object.values(trueList)){
+            const user = await UsersDAO.getUserByID(x.by)
+            retData.push({
+                user: user,
+                title: x.title,
+                text: x.text,
+                created: x.created,
+                id: x._id,
+                numLikes: x.likes.length,
+                numReplies: x.replies.length
+            })
+        }
+        return retData.sort((a, b) => b.numLikes - a.numLikes)
     }
 }
