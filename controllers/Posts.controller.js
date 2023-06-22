@@ -38,4 +38,13 @@ export default class PostsController{
             res.json({success: success})
         }
     }
+
+    static async getUsersFollowingPosts(req, res, next){
+        const { id, page } = req.query
+        res.json(await PostsDAO.getFollowedPosts(id, page))
+    }
+
+    static async getTrending(req, res, next){
+        res.json(await PostsDAO.getTrending())
+    }
 }

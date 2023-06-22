@@ -22,7 +22,7 @@ export default class MusicController{
     static async getTracks(req, res, next){
         const auth_token = (await this.getAuthToken(req, res, next))["access_token"]
         const q = req.query.q || "kickback"
-        const rawData = await fetch(`${apiBase}/search?q=${q}&limit=50&market=CA&type=track`, {
+        const rawData = await fetch(`${apiBase}/search?q=${q}&limit=50&market=US&type=track`, {
             headers: {
                 "Authorization": `Bearer ${auth_token}`
             }

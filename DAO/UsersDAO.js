@@ -202,4 +202,16 @@ export default class UsersDAO{
         }
         return retData.sort((a, b) => b.numFollowers - a.numFollowers)
     }
+
+    static async getUsersFromArray(arr){
+        let userList
+        try{
+            userList = await (await users.find({_id: {$in: arr}})).toArray()
+        }
+        catch(e){
+            console.log(e)
+            return false
+        }
+        return userList
+    }
 }

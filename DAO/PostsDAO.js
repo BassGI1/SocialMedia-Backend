@@ -172,4 +172,39 @@ export default class PostsDAO{
         }
         return retData.sort((a, b) => b.numLikes - a.numLikes)
     }
+
+    static async getFollowedPosts(id, page){
+        const followedUsers = await UsersDAO.getUsersFollowed(id)
+        const usersObj = {}
+        for (const user of followedUsers){
+            if (!usersObj[user._id.toString()]) usersObj[user._id.toString()] = user
+        }
+        const followedUsersIds = (followedUsers || []).map(u => u._id.toString())
+        if (!followedUsersIds.length) return false
+        let followedposts
+        try{
+            followedposts = await (await posts.find({by: {$in: followedUsersIds}}).sort({_id: -1}).skip(page*10).limit(10)).toArray()
+        }
+        catch(e){
+            console.log(e)
+            return false
+        }
+        return {
+            posts: followedposts,
+            usersObj: usersObj
+        }
+    }
+
+    static async getTrending(){
+        let trendingPosts
+        try{
+            trendingPosts = await (await posts.find({created: {$gte: new Date(new Date() - 24*1000*3600), $lt: new Date()}}).limit(100)).toArray()
+        }
+        catch(e){
+            console.log(e)
+            return false
+        }
+        const users = await UsersDAO.getUsersFromArray(trendingPosts.map(x => new ObjectId(x.by)))
+        return {users: users, posts: trendingPosts}
+    }
 }

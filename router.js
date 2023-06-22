@@ -60,6 +60,12 @@ router.route("/changelikestatus")
 router.route("/deletepost")
 .post((req, res, next) => PostsController.deletePost(req, res, next))
 
+router.route("/followedposts")
+.get((req, res, next) => PostsController.getUsersFollowingPosts(req, res, next))
+
+router.route("/trending")
+.get((req, res, next) => PostsController.getTrending(req, res, next))
+
 
 // Suggestion Box Routes
 router.route("/suggest")
