@@ -1,5 +1,6 @@
 import { ObjectId } from "mongodb"
 import UsersDAO from "./UsersDAO.js"
+import ImagesController from "../controllers/Images.controller.js"
 
 let posts
 
@@ -175,6 +176,10 @@ export default class PostsDAO{
 
     static async getFollowedPosts(id, page){
         const followedUsers = await UsersDAO.getUsersFollowed(id)
+        for (let i = 0; i < followedUsers.length; ++i){
+            let image = await ImagesController.getImage(followedUsers[i]._id.toString())
+            followedUsers[i].image = image
+        } 
         const usersObj = {}
         for (const user of followedUsers){
             if (!usersObj[user._id.toString()]) usersObj[user._id.toString()] = user
@@ -205,6 +210,10 @@ export default class PostsDAO{
             return false
         }
         const users = await UsersDAO.getUsersFromArray(trendingPosts.map(x => new ObjectId(x.by)))
+        for (let i = 0; i < users.length; ++i){
+            let image = await ImagesController.getImage(users[i]._id.toString())
+            users[i].image = image
+        }
         return {users: users, posts: trendingPosts}
     }
 }
