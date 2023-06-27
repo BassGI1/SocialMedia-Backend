@@ -34,7 +34,7 @@ export default class MusicController{
             tracksData.forEach(element => {
                 tracks.push({id: element["id"], images: element["album"]["images"][0]["url"], name: element["name"], preview_url: element["preview_url"], artist: element["artists"][0]["name"], spotify: element["external_urls"]["spotify"]})
             })
-            res.setHeader("Access-Control-Allow-Origin", "https://ykqqpydbmi4vcotcg1cbx6oqahs43q.netlify.app/")
+            res.setHeader("Access-Control-Allow-Origin", "https://ykqqpydbmi4vcotcg1cbx6oqahs43q.netlify.app")
             res.json(tracks)
         }
     }
