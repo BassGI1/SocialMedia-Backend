@@ -203,7 +203,7 @@ export default class PostsDAO{
     static async getTrending(){
         let trendingPosts
         try{
-            trendingPosts = await (await posts.find({created: {$gte: new Date(new Date() - 24*1000*3600), $lt: new Date()}}).limit(100)).toArray()
+            trendingPosts = await (await posts.find({created: {$gte: new Date(new Date() - 24*1000*3600)}}).limit(100)).toArray()
         }
         catch(e){
             console.log(e)
