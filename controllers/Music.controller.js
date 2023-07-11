@@ -1,9 +1,12 @@
 import fetch from "node-fetch"
+import dotenv from "dotenv"
 
-const client_id = "8afc27bfcdfe4f9db41d9601429b457c"
-const client_secret = "b42e2c6eafbe40a7be99d99b67e48eff"
-const accountsBase = "https://accounts.spotify.com"
-const apiBase = "https://api.spotify.com/v1"
+dotenv.config()
+
+const client_id = process.env.SPOTIFY_CLIENT_ID
+const client_secret = process.env.SPOTIFY_CLIENT_SECRET
+const accountsBase = process.env.SPOTIFY_ACCOUNTS_BASE
+const apiBase = process.env.SPOTIFY_API_BASE
 
 const toUrlEncoded = obj => Object.keys(obj).map(k => encodeURIComponent(k) + '=' + encodeURIComponent(obj[k])).join('&');
 
